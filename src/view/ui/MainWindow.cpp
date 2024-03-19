@@ -1,6 +1,11 @@
 #include "MainWindow.hpp"
 
-MainWindow::MainWindow(RtpVideo* rtpVideo) 
+namespace view
+{
+namespace ui
+{
+
+MainWindow::MainWindow(view::communication::video::RtpVideo* rtpVideo) 
 : mPaintArea(rtpVideo)
 {
   set_title("Video");
@@ -12,3 +17,5 @@ MainWindow::~MainWindow()
 {
 }
 
+} // namespace ui
+} // namespace view

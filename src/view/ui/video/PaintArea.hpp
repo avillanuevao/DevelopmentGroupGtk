@@ -1,15 +1,22 @@
-#ifndef GTKMM__PAINTAREA_H
-#define GTKMM__PAINTAREA_H
+#ifndef VIEW_UI_VIDEO_PAINTAREA_HPP
+#define VIEW_UI_VIDEO_PAINTAREA_HPP
 
 #include <gtkmm/drawingarea.h>
 #include <cairomm/context.h>
 
-#include <RtpVideo.hpp>
+#include <view/communication/video/RtpVideo.hpp>
+
+namespace view
+{
+namespace ui
+{
+namespace video
+{
 
 class PaintArea : public Gtk::DrawingArea
 {
 public:
-  PaintArea(RtpVideo* rtpVideo);
+  PaintArea(view::communication::video::RtpVideo* rtpVideo);
   virtual ~PaintArea();
 
   bool on_timeout();
@@ -23,10 +30,14 @@ private:
   void paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height);
 
   GtkWidget* mDrawingArea = nullptr;
-  RtpVideo::OnDrawData mData;
+  view::communication::video::RtpVideo::OnDrawData mData;
   Cairo::RefPtr<Cairo::Surface> mSurface;
-  RtpVideo* mRtpVideo;
+  view::communication::video::RtpVideo* mRtpVideo;
   
 };
 
-#endif // GTKMM__PAINTAREA_H
+} // namespace video
+} // namespace ui
+} // namespace view
+
+#endif // VIEW_UI_VIDEO_PAINTAREA_HPP

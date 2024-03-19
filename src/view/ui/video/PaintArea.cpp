@@ -3,7 +3,14 @@
 #include "PaintArea.hpp"
 #include <mediax/common/example_helpers.h>
 
-PaintArea::PaintArea(RtpVideo* rtpVideo)
+namespace view
+{
+namespace ui
+{
+namespace video
+{
+
+PaintArea::PaintArea(view::communication::video::RtpVideo* rtpVideo)
   : mDrawingArea(nullptr),
     mData(),
     mSurface(),
@@ -111,7 +118,7 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
       auto start = std::chrono::high_resolution_clock::now();
 
       uint8_t *cpu_buffer;
-      auto data = static_cast<RtpVideo::OnDrawData *>(&mData);
+      auto data = static_cast<view::communication::video::RtpVideo::OnDrawData *>(&mData);
       mediax::video::ColourSpaceCpu convert;
 
       // Fill the surface with video data if available
@@ -199,7 +206,7 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
       if (elapsed.count() >= (1000 / mRtpVideo->framerate)) sleep_time = 1;
 
       // Update the g_timeout_add
-      mRtpVideo->timeout_id_ = g_timeout_add(sleep_time, RtpVideo::UpdateCallback,
+      mRtpVideo->timeout_id_ = g_timeout_add(sleep_time, view::communication::video::RtpVideo::UpdateCallback,
                                   mDrawingArea);  // framerate is in milliseconds
   #else
       data->cr = cr;
@@ -236,3 +243,7 @@ void PaintArea::paintSquare(const Cairo::RefPtr<Cairo::Context> &cr, int width, 
   cr->set_line_width(10.0);
   cr->stroke();
 }
+
+} // namespace video
+} // namespace ui
+} // namespace view

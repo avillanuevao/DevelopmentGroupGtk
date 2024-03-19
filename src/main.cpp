@@ -2,10 +2,11 @@
 
 #include <mediax/version.h>
 
-#include <ui/MainWindow.hpp>
+#include <view/ui/MainWindow.hpp>
+#include <view/communication/video/RtpVideo.hpp>
 
 GtkWidget *drawing_area = nullptr;
-RtpVideo* mRtpVideo = nullptr;
+view::communication::video::RtpVideo* mRtpVideo = nullptr;
 
 void signalHandler(int signum [[maybe_unused]]) 
 {
@@ -37,12 +38,12 @@ int main(int argc, char *argv[])
   google::InstallFailureSignalHandler();
   mediax::InitRtp(argc, argv);
 
-  mRtpVideo = new RtpVideo();
+  mRtpVideo = new view::communication::video::RtpVideo();
 
   signal(SIGINT, signalHandler);
   signal(SIGTERM, signalHandler);
 
-  int exit = app->make_window_and_run<MainWindow>(argc, argv, mRtpVideo);
+  int exit = app->make_window_and_run<view::ui::MainWindow>(argc, argv, mRtpVideo);
 
   mRtpVideo->rtp_->Stop();
   mRtpVideo->rtp_->Close();

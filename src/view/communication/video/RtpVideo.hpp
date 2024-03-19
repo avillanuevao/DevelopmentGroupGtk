@@ -1,5 +1,5 @@
-#ifndef RTPVIDEO_H
-#define RTPVIDEO_H
+#ifndef VIEW_COMMUNICATION_VIDEO_RTPVIDEO_HPP
+#define VIEW_COMMUNICATION_VIDEO_RTPVIDEO_HPP
 
 #include <gtkmm.h>
 #include <gflags/gflags.h>
@@ -9,30 +9,12 @@
 
 #include <glog/logging.h>
 
-
-// DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream");
-// DEFINE_uint32(port, kPortDefault, "the port to use for the transmit stream");
-// DEFINE_uint32(height, kHeightDefault, "the height of the image");
-// DEFINE_uint32(width, kWidthDefault, "the width of the image");
-// DEFINE_uint32(framerate, 25, "the frames per second");
-// DEFINE_string(session_name, kSessionName, "the SAP/SDP session name");
-// DEFINE_bool(verbose, false, "For verbose output");
-// DEFINE_bool(wait_sap, false, "wait for SAP/SDP announcement");
-// DEFINE_bool(uncompressed, true, "Uncompressed video stream");
-// DEFINE_uint32(mode, 1,
-//               "The video mode (0-4)\n\t"
-//               "0 - Uncompressed RGB\n\t"
-//               "1 - Uncompressed YUV\n\t"
-//               "2 - Mono16\n\t"
-// #if GST_SUPPORTED
-//               "3 - Mono8\n\t"
-//               "4 - H.264\n\t"
-//               "5 - H.264\n\t");
-// #else
-//               "3 - Mono8\n\t");
-// #endif
-// DEFINE_uint32(num_frames, 0, "The number of frames to send");
-
+namespace view
+{
+namespace communication
+{
+namespace video
+{
 
 class RtpVideo 
 {
@@ -132,4 +114,9 @@ class RtpVideo
     uint32_t frame_counter_;
 };
 
-#endif //RTPVIDEO_H
+} // namespace video
+} // namespace communication
+} // namespace view
+
+
+#endif // VIEW_COMMUNICATION_VIDEO_RTPVIDEO_HPP
