@@ -30,8 +30,6 @@ private:
   void paintSquare(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height);
   void paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height);
 
-  GtkWidget* mDrawingArea = nullptr;
-  Cairo::RefPtr<Cairo::Surface> mSurface;
   view::communication::video::RtpVideo* mRtpVideo;
   cairo_surface_t* mSurface_t;
   

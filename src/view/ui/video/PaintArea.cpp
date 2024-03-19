@@ -10,9 +10,8 @@ namespace video
 {
 
 PaintArea::PaintArea(view::communication::video::RtpVideo* rtpVideo)
-  : mDrawingArea(nullptr),
-    mSurface(),
-    mRtpVideo(rtpVideo)
+  : mRtpVideo(rtpVideo),
+    mSurface_t(nullptr)
 {
   initializeRtp();
 
@@ -34,17 +33,14 @@ bool PaintArea::on_timeout()
 
 void PaintArea::initializeRtp()
 {
-  mDrawingArea = gtk_drawing_area_new();
   mSurface_t = cairo_image_surface_create(CAIRO_FORMAT_RGB24, mRtpVideo->width, mRtpVideo->height);
 
-  // auto a = static_cast<Gtk::Widget*>(this);
-  gtk_widget_set_size_request(mDrawingArea, mRtpVideo->width, mRtpVideo->height);
   // this->set_size_request(mRtpVideo->width, mRtpVideo->height);
-  g_object_set_data(G_OBJECT(mDrawingArea), "surface", mSurface_t);
-  // this->set_data("surface", mSurface_t);
+  this->set_content_width(mRtpVideo->width);
+  this->set_content_height(mRtpVideo->height);
+  this->set_data("surface", mSurface_t);
 
   mRtpVideo->startCapture();
-
 }
 
 void PaintArea::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
@@ -77,9 +73,8 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
     // Mark the surface as dirty to ensure the data is properly updated
     // cairo_surface_mark_dirty(data->surface);
 
-    auto surface = new Cairo::Surface(mSurface_t);
-    mSurface = Cairo::RefPtr<Cairo::Surface>(surface);
-    cr->set_source(mSurface, 0, 0);
+    auto surface = Cairo::RefPtr<Cairo::Surface>(new Cairo::Surface(mSurface_t));
+    cr->set_source(surface, 0, 0);
     cr->paint();
         
   } 
@@ -89,7 +84,7 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
     cr->select_font_face("Courier", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::BOLD);
     cr->set_font_size(24);
     cr->move_to(20, 50);
-    
+
     std::string no_stream = "No Stream " + mRtpVideo->session_name + ":" + mRtpVideo->ipaddr + ":" + std::to_string(mRtpVideo->port) + "\n";
     cr->show_text(no_stream.c_str());
   }
