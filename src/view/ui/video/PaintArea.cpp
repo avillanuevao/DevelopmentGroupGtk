@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "PaintArea.hpp"
-#include <mediax/common/example_helpers.h>
 
 namespace view
 {
@@ -12,25 +11,18 @@ namespace video
 
 PaintArea::PaintArea(view::communication::video::RtpVideo* rtpVideo)
   : mDrawingArea(nullptr),
-    mData(),
     mSurface(),
     mRtpVideo(rtpVideo)
 {
   initializeRtp();
 
-  Glib::signal_timeout().connect(sigc::mem_fun(*this, &PaintArea::on_timeout), 33); //25 millisec -> 40 FPS
+  Glib::signal_timeout().connect(sigc::mem_fun(*this, &PaintArea::on_timeout), mRtpVideo->frameRateToMillisec()); //25 millisec -> 40 FPS
   set_draw_func(sigc::mem_fun(*this, &PaintArea::on_draw));
 }
 
 PaintArea::~PaintArea()
 {
-  mRtpVideo->rtp_->Stop();
-  mRtpVideo->rtp_->Close();
-
-  mediax::RtpCleanup();
-
-  std::cout << "Recieved " << mRtpVideo->count_ << ", dropped " << mRtpVideo->dropped_ << "\n";
-  std::cout << "RTP (Rx) Example terminated...\n";
+  mRtpVideo->stopCapture();
 }
 
 bool PaintArea::on_timeout()
@@ -42,13 +34,6 @@ bool PaintArea::on_timeout()
 
 void PaintArea::initializeRtp()
 {
-  std::cout << "Example RTP (Rx) streaming (" << mRtpVideo->width << "x" << mRtpVideo->height << " " << ModeToString(mRtpVideo->mode)
-            << ") to " << mRtpVideo->ipaddr << ":" << mRtpVideo->port << "@" << mRtpVideo->framerate << "Htz\n";
-
-  mediax::rtp::ColourspaceType video_mode = GetMode(mRtpVideo->mode);
-
-  mRtpVideo->timeout_ = (1000 / mRtpVideo->framerate) * 2;
-
   mDrawingArea = gtk_drawing_area_new();
   mRtpVideo->surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, mRtpVideo->width, mRtpVideo->height);
 
@@ -58,51 +43,11 @@ void PaintArea::initializeRtp()
   g_object_set_data(G_OBJECT(mDrawingArea), "surface", mRtpVideo->surface);
   // this->set_data("surface", mRtpVideo->surface);
 
-  mData = {nullptr,
-           mRtpVideo->session_name,
-           mRtpVideo->surface,
-           static_cast<int>(mRtpVideo->height),
-           static_cast<int>(mRtpVideo->width),
-           mRtpVideo->ipaddr,
-           (uint16_t)mRtpVideo->port};
-
-
-#if GST_SUPPORTED
-  switch (video_mode) {
-    default:  // Assume uncompressed
-      RtpVideo::rtp_ = std::make_shared<mediax::rtp::uncompressed::RtpUncompressedDepayloader>();
-      break;
-    case mediax::rtp::ColourspaceType::kColourspaceH264Part10:
-    case mediax::rtp::ColourspaceType::kColourspaceH264Part4:
-      RtpVideo::rtp_ = std::make_shared<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
-      break;
-    case mediax::rtp::ColourspaceType::kColourspaceH265:
-      RtpVideo::rtp_ = std::make_shared<mediax::rtp::h265::gst::vaapi::RtpH265GstVaapiDepayloader>();
-      break;
-  }
-#else
-  mRtpVideo->rtp_ = std::make_shared<mediax::rtp::uncompressed::RtpUncompressedDepayloader>();
-#endif
-
-  // Start processing video
-  mRtpVideo->SetupStream(video_mode);
-
-  #if CALLBACK
-  // Setup the callback if we are event driven
-  RtpVideo::rtp_->RegisterCallback(RtpVideo::RtpCallback);
-#else
-
   // Start the update timer
   mRtpVideo->timeout_id_ =
       g_timeout_add(1000 / mRtpVideo->framerate, mRtpVideo->UpdateCallback, mDrawingArea);  // framerate is in milliseconds
-#endif
 
-  // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
-  if (!mRtpVideo->rtp_->Open()) {
-    LOG(ERROR) << "Could not open stream, quitting";
-    exit(1);
-  }
-  mRtpVideo->rtp_->Start();
+  mRtpVideo->startCapture();
 
 }
 
@@ -118,20 +63,19 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
       auto start = std::chrono::high_resolution_clock::now();
 
       uint8_t *cpu_buffer;
-      auto data = static_cast<view::communication::video::RtpVideo::OnDrawData *>(&mData);
       mediax::video::ColourSpaceCpu convert;
 
       // Fill the surface with video data if available
-      if (mRtpVideo->rtp_->Receive(&cpu_buffer, mRtpVideo->timeout_) == true) 
+      if (mRtpVideo->receiveRtp(&cpu_buffer, mRtpVideo->timeout_)) 
       {
-        unsigned char *surface_data = cairo_image_surface_get_data(data->surface);
+        unsigned char *surface_data = cairo_image_surface_get_data(mRtpVideo->surface);
 
         // Get the width and height of the surface
-        int width = cairo_image_surface_get_width(data->surface);
-        int height = cairo_image_surface_get_height(data->surface);
+        int width = cairo_image_surface_get_width(mRtpVideo->surface);
+        int height = cairo_image_surface_get_height(mRtpVideo->surface);
 
         // Check the colourspace
-        if (auto format = cairo_image_surface_get_format(data->surface); format != CAIRO_FORMAT_RGB24) 
+        if (auto format = cairo_image_surface_get_format(mRtpVideo->surface); format != CAIRO_FORMAT_RGB24) 
         {
           LOG(ERROR) << "Unsupported format=" << format << "\n";
           return ;
@@ -162,7 +106,7 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
         // Mark the surface as dirty to ensure the data is properly updated
         // cairo_surface_mark_dirty(data->surface);
 
-        auto surface = new Cairo::Surface(data->surface);
+        auto surface = new Cairo::Surface(mRtpVideo->surface);
         mSurface = Cairo::RefPtr<Cairo::Surface>(surface);
         cr->set_source(mSurface, 0, 0);
         cr->paint();
@@ -174,7 +118,7 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
         cr->select_font_face("Courier", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::BOLD);
         cr->set_font_size(24);
         cr->move_to(20, 50);
-        std::string no_stream = "No Stream " + data->name + ":" + data->ipaddr + ":" + std::to_string(data->port) + "\n";
+        std::string no_stream = "No Stream " + mRtpVideo->session_name + ":" + mRtpVideo->ipaddr + ":" + std::to_string(mRtpVideo->port) + "\n";
         cr->show_text(no_stream.c_str());
         mRtpVideo->dropped_++;
       }
@@ -209,9 +153,9 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
       mRtpVideo->timeout_id_ = g_timeout_add(sleep_time, view::communication::video::RtpVideo::UpdateCallback,
                                   mDrawingArea);  // framerate is in milliseconds
   #else
-      data->cr = cr;
-      timeout_id_ = g_timeout_add(200, Receive::UpdateCallback,
-                                  drawing_area);  // framerate is in milliseconds
+      // data->cr = cr;
+      // timeout_id_ = g_timeout_add(200, Receive::UpdateCallback,
+      //                             drawing_area);  // framerate is in milliseconds
 
   #endif
       //return TRUE;

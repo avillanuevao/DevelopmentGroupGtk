@@ -5,16 +5,13 @@
 #include <view/ui/MainWindow.hpp>
 #include <view/communication/video/RtpVideo.hpp>
 
-GtkWidget *drawing_area = nullptr;
 view::communication::video::RtpVideo* mRtpVideo = nullptr;
 
 void signalHandler(int signum [[maybe_unused]]) 
 {
   // GTK close
   ///%gtk_main_quit();
-  mRtpVideo->rtp_->Stop();
-  mRtpVideo->rtp_->Close();
-  mediax::RtpCleanup();
+  mRtpVideo->stopCapture();
   std::cout << "receive-example Interrupt signal (" << signum << ") received.\n";
 
   exit(1);
@@ -45,10 +42,7 @@ int main(int argc, char *argv[])
 
   int exit = app->make_window_and_run<view::ui::MainWindow>(argc, argv, mRtpVideo);
 
-  mRtpVideo->rtp_->Stop();
-  mRtpVideo->rtp_->Close();
-
-  mediax::RtpCleanup();
+  mRtpVideo->stopCapture();
 
   std::cout << "Exit..." << std::endl;
 

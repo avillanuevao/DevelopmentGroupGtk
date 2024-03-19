@@ -3,7 +3,6 @@
 
 #include <gtkmm.h>
 #include <gflags/gflags.h>
-// #include <mediax/common/example.h>
 #include <mediax/lib/src/sap/sap_listener.h>
 #include <mediax/lib/src/rtp/rtp.h>
 
@@ -15,36 +14,31 @@ namespace communication
 {
 namespace video
 {
-
 class RtpVideo 
 {
   public:
 
-    // struct FLAGS
-    // {
-        const char* ipaddr = "127.0.0.1";
-        const unsigned int port = 5004;
-        const unsigned int height = 480;
-        const unsigned int width = 640;
-        const unsigned int framerate = 25; 
-        const std::string session_name = "test_session_name";
-        const bool verbose = false;
-        const bool wait_sap = false;
-        const bool uncompressed = true;
-        const unsigned int mode = 1;
-        const unsigned int num_frames = 0;
-    // };
+    const char* ipaddr = "127.0.0.1";
+    const unsigned int port = 5004;
+    const unsigned int height = 480;
+    const unsigned int width = 640;
+    const unsigned int framerate = 30; 
+    const std::string session_name = "test_session_name";
+    const bool verbose = false;
+    const bool wait_sap = false;
+    const bool uncompressed = true;
+    const unsigned int mode = 1;
+    const unsigned int num_frames = 0;
 
-    struct OnDrawData 
-    {
-        cairo_t *cr;
-        std::string name;
-        cairo_surface_t *surface;
-        int32_t height;
-        int32_t width;
-        std::string ipaddr;
-        uint16_t port;
-    };
+
+    RtpVideo();
+    ~RtpVideo();
+
+    unsigned int frameRateToMillisec();
+    void startCapture();
+    void stopCapture();
+
+    bool receiveRtp(uint8_t **cpu, int32_t timeout);
 
     ///
     /// \brief The GTK update callback
@@ -75,32 +69,8 @@ class RtpVideo
     ///
     /// \param mode the video mode
     ///
-    void SetupStream(mediax::rtp::ColourspaceType video_mode) {
-      // Setup stream
-      mediax::rtp::StreamInformation stream_information = {session_name, ipaddr, (uint16_t)port,
-                                                          height,       width,  framerate,
-                                                          video_mode,         false};
-      if (wait_sap) {
-        // Just give the stream name and wait for SAP/SDP announcement
-        LOG(INFO) << "Example RTP streaming to " << session_name;
-        sap_listener_ = std::make_shared<mediax::sap::SapListener>();
-        sap_listener_->Start();
-        // Sleep for one second to allow the SAP listener to start
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+    void SetupStream(mediax::rtp::ColourspaceType video_mode);
 
-        if (sap_listener_->GetStreamInformation(session_name, &stream_information) == false) {
-          LOG(ERROR) << "Could not get stream information, quitting";
-          exit(1);
-        }
-        // Add SAP callback here
-        rtp_->SetStreamInfo(stream_information);
-      } else {
-        LOG(INFO) << "Example RTP streaming to " << ipaddr << ":" << port;
-        rtp_->SetStreamInfo(stream_information);
-      }
-    }
-
-    std::shared_ptr<mediax::rtp::RtpDepayloader> rtp_;
     int32_t timeout_;
     uint32_t count_;
     uint32_t dropped_;
@@ -110,6 +80,7 @@ class RtpVideo
 
   private:
     std::shared_ptr<mediax::sap::SapListener> sap_listener_;
+    std::shared_ptr<mediax::rtp::RtpDepayloader> rtp_;
 
     uint32_t frame_counter_;
 };
