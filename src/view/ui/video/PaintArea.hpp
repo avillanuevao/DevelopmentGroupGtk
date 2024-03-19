@@ -1,6 +1,7 @@
 #ifndef VIEW_UI_VIDEO_PAINTAREA_HPP
 #define VIEW_UI_VIDEO_PAINTAREA_HPP
 
+#include <gtkmm.h>
 #include <gtkmm/drawingarea.h>
 #include <cairomm/context.h>
 
@@ -32,6 +33,7 @@ private:
   GtkWidget* mDrawingArea = nullptr;
   Cairo::RefPtr<Cairo::Surface> mSurface;
   view::communication::video::RtpVideo* mRtpVideo;
+  cairo_surface_t* mSurface_t;
   
 };
 

@@ -1,7 +1,6 @@
 #ifndef VIEW_COMMUNICATION_VIDEO_RTPVIDEO_HPP
 #define VIEW_COMMUNICATION_VIDEO_RTPVIDEO_HPP
 
-#include <gtkmm.h>
 #include <gflags/gflags.h>
 #include <mediax/lib/src/sap/sap_listener.h>
 #include <mediax/lib/src/rtp/rtp.h>
@@ -14,6 +13,7 @@ namespace communication
 {
 namespace video
 {
+
 class RtpVideo 
 {
   public:
@@ -30,59 +30,24 @@ class RtpVideo
     const unsigned int mode = 1;
     const unsigned int num_frames = 0;
 
-
     RtpVideo();
     ~RtpVideo();
 
+    void setupStream(mediax::rtp::ColourspaceType video_mode);
     unsigned int frameRateToMillisec();
+
     void startCapture();
     void stopCapture();
-
-    bool receiveRtp(uint8_t **cpu, int32_t timeout);
-
-    ///
-    /// \brief The GTK update callback
-    ///
-    /// \param user_data the user data
-    /// \return gboolean true if successful
-    ///
-    static gboolean UpdateCallback(gpointer user_data) {
-      gtk_widget_queue_draw(GTK_WIDGET(user_data));
-      return TRUE;
-    }
-
-    ///
-    /// \brief Rtp Callback to drive display
-    ///
-    /// \param depay the RTP Depayloader
-    /// \param data the recieved video frame data
-    ///
-    void RtpCallback(const mediax::rtp::RtpDepayloader &rtp [[maybe_unused]],
-                            mediax::rtp::RtpCallbackData frame [[maybe_unused]]) {
-      // We dont need to render now its safe to call the Recieve function via the GTK callback
-    ///%   gtk_widget_queue_draw(GTK_WIDGET(Receive::window));
-      return;
-    }
-
-    ///
-    /// \brief Start to process the incoming video stream
-    ///
-    /// \param mode the video mode
-    ///
-    void SetupStream(mediax::rtp::ColourspaceType video_mode);
-
-    int32_t timeout_;
-    uint32_t count_;
-    uint32_t dropped_;
-    guint timeout_id_;
-    cairo_surface_t *surface;
-    GtkWidget *window;
+    bool receiveRtp();
+    void convertBufferToSurface(int width, int heigh, unsigned char* surface_data);
 
   private:
-    std::shared_ptr<mediax::sap::SapListener> sap_listener_;
-    std::shared_ptr<mediax::rtp::RtpDepayloader> rtp_;
+    std::shared_ptr<mediax::sap::SapListener> mSapListener;
+    std::shared_ptr<mediax::rtp::RtpDepayloader> mRtp;
 
-    uint32_t frame_counter_;
+    int32_t mTimeout;
+    uint8_t* mCpuBuffer;
+
 };
 
 } // namespace video
