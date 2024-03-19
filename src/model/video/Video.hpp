@@ -3,15 +3,25 @@
 
 #include <iostream>
 
+#include <utils/designPattern/SignalPublisher.hpp>
+#include <model/video/signal/ShowHideFPSSignal.hpp>
+
 namespace model
 {
 namespace video 
 {
 
-class Video
+class Video : 
+  public utils::designPattern::SignalPublisher<model::video::signal::ShowHideFPSSignal>
 {
   public:
-    Video() = default;
+    Video();
+
+    void setIsShowingFPS(bool value);
+    bool getIsShowingFPS();
+
+  private:
+    bool mIsShowingFPS;
 };
 
 } // namespace video

@@ -1,9 +1,11 @@
-
+#include <memory>
 
 #include <mediax/version.h>
 
 #include <view/ui/MainWindow.hpp>
 #include <view/communication/video/RtpVideo.hpp>
+#include <controller/video/ShowHideFPSController.hpp>
+#include <model/video/Video.hpp>
 
 GtkWidget *drawing_area = nullptr;
 view::communication::video::RtpVideo* mRtpVideo = nullptr;
@@ -19,7 +21,6 @@ void signalHandler(int signum [[maybe_unused]])
 
   exit(1);
 }
-
 
 int main(int argc, char *argv[]) 
 {
@@ -39,11 +40,16 @@ int main(int argc, char *argv[])
   mediax::InitRtp(argc, argv);
 
   mRtpVideo = new view::communication::video::RtpVideo();
+  std::shared_ptr<model::video::Video> mVideoModel = std::make_shared<model::video::Video>();
+  std::shared_ptr<controller::video::ShowHideFPSVideoController> mShowHideFPSVideoController =
+    std::make_shared<controller::video::ShowHideFPSVideoController>(
+      controller::video::ShowHideFPSVideoController(mVideoModel));
 
   signal(SIGINT, signalHandler);
   signal(SIGTERM, signalHandler);
 
-  int exit = app->make_window_and_run<view::ui::MainWindow>(argc, argv, mRtpVideo);
+  int exit = app->make_window_and_run<view::ui::MainWindow>(argc, argv, mRtpVideo, mVideoModel,
+    mShowHideFPSVideoController);
 
   mRtpVideo->rtp_->Stop();
   mRtpVideo->rtp_->Close();

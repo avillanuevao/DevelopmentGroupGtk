@@ -13,7 +13,12 @@ namespace signal
 class ShowHideFPSSignal
 {
   public:
-    ShowHideFPSSignal() = default;
+    ShowHideFPSSignal(bool isShowingFPSVideo);
+
+    bool getIsShowingFPSVideo();
+
+  private:
+    bool mIsShowingFPSVideo;
 };
 
 } // namespace signal
