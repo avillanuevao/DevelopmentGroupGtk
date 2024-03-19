@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(VideoF2 LANGUAGES CXX)
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -frecord-gcc-switches -Wall -Wextra -pedantic")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -frecord-gcc-switches -Wall -Wextra -pedantic")
 
 find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-4.0 REQUIRED)

@@ -9,12 +9,9 @@ PaintArea::PaintArea(RtpVideo* rtpVideo)
     mSurface(),
     mRtpVideo(rtpVideo)
 {
-  //set_size_request (300, 300);
-  // mRtpVideo = new RtpVideo();
   initializeRtp();
 
-  // Glib::signal_timeout().connect(sigc::mem_fun(*this, &PaintArea::on_timeout), fpsTomillisec(mRtpVideo->framerate));
-  Glib::signal_timeout().connect(sigc::mem_fun(*this, &PaintArea::on_timeout), 33);
+  Glib::signal_timeout().connect(sigc::mem_fun(*this, &PaintArea::on_timeout), 33); //25 millisec -> 40 FPS
   set_draw_func(sigc::mem_fun(*this, &PaintArea::on_draw));
 }
 
@@ -25,7 +22,7 @@ PaintArea::~PaintArea()
 
   mediax::RtpCleanup();
 
-  if (mRtpVideo->verbose) std::cout << "Recieved " << mRtpVideo->count_ << ", dropped " << mRtpVideo->dropped_ << "\n";
+  std::cout << "Recieved " << mRtpVideo->count_ << ", dropped " << mRtpVideo->dropped_ << "\n";
   std::cout << "RTP (Rx) Example terminated...\n";
 }
 
@@ -34,11 +31,6 @@ bool PaintArea::on_timeout()
   // force our program to redraw the entire clock.
   queue_draw();
   return true;
-}
-
-int PaintArea::fpsTomillisec(int fps)
-{
-  return (1/fps) * 1000.0;
 }
 
 void PaintArea::initializeRtp()
@@ -53,9 +45,11 @@ void PaintArea::initializeRtp()
   mDrawingArea = gtk_drawing_area_new();
   mRtpVideo->surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, mRtpVideo->width, mRtpVideo->height);
 
-
+  // auto a = static_cast<Gtk::Widget*>(this);
   gtk_widget_set_size_request(mDrawingArea, mRtpVideo->width, mRtpVideo->height);
+  // this->set_size_request(mRtpVideo->width, mRtpVideo->height);
   g_object_set_data(G_OBJECT(mDrawingArea), "surface", mRtpVideo->surface);
+  // this->set_data("surface", mRtpVideo->surface);
 
   mData = {nullptr,
            mRtpVideo->session_name,
@@ -161,8 +155,8 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
         // Mark the surface as dirty to ensure the data is properly updated
         // cairo_surface_mark_dirty(data->surface);
 
-        auto a = new Cairo::Surface(data->surface);
-        mSurface = Cairo::RefPtr<Cairo::Surface>(a);
+        auto surface = new Cairo::Surface(data->surface);
+        mSurface = Cairo::RefPtr<Cairo::Surface>(surface);
         cr->set_source(mSurface, 0, 0);
         cr->paint();
         

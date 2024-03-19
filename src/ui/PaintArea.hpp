@@ -13,7 +13,6 @@ public:
   virtual ~PaintArea();
 
   bool on_timeout();
-  int fpsTomillisec(int fps);
 
 protected:
   void on_draw(const Cairo::RefPtr<Cairo::Context> &context, int width, int height);

@@ -4,18 +4,18 @@
 
 #include <ui/MainWindow.hpp>
 
-#define CALLBACK 1
-
 GtkWidget *drawing_area = nullptr;
 RtpVideo* mRtpVideo = nullptr;
 
-void signalHandler(int signum [[maybe_unused]]) {
-  std::cout << "receive-example Interrupt signal (" << signum << ") received.\n";
+void signalHandler(int signum [[maybe_unused]]) 
+{
   // GTK close
   ///%gtk_main_quit();
   mRtpVideo->rtp_->Stop();
   mRtpVideo->rtp_->Close();
   mediax::RtpCleanup();
+  std::cout << "receive-example Interrupt signal (" << signum << ") received.\n";
+
   exit(1);
 }
 
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
   google::InstallFailureSignalHandler();
   mediax::InitRtp(argc, argv);
 
-  RtpVideo* mRtpVideo = new RtpVideo();
+  mRtpVideo = new RtpVideo();
 
   signal(SIGINT, signalHandler);
   signal(SIGTERM, signalHandler);
@@ -49,8 +49,7 @@ int main(int argc, char *argv[])
 
   mediax::RtpCleanup();
 
-  // if (FLAGS_verbose) std::cout << "Recieved " << RtpVideo::count_ << ", dropped " << RtpVideo::dropped_ << "\n";
-  // std::cout << "RTP (Rx) Example terminated...\n";
+  std::cout << "Exit..." << std::endl;
 
   return exit;
 }

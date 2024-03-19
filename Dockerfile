@@ -1,7 +1,7 @@
 #INSTALL UBUNTU AND BASICS#################################
 FROM ubuntu:22.04
 
-RUN apt -y update && apt-get install -y cmake build-essential git g++ autotools-dev gdb pkg-config
+RUN apt -y update && apt-get install -y cmake build-essential git g++ autotools-dev gdb pkg-config valgrind
 
 ###########################################################
 
