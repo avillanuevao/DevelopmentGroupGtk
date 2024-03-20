@@ -13,7 +13,10 @@ namespace signal
 class PlayPauseVideoSignal
 {
   public:
-    PlayPauseVideoSignal() = default;
+    PlayPauseVideoSignal(bool isPlayingVideo);
+
+  private:
+    bool mIsPlayingVideo;
 };
 
 } // namespace signal

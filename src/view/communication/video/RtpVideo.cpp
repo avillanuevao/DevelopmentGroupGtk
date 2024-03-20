@@ -1,7 +1,7 @@
+#include "RtpVideo.hpp"
 
 #include <mediax/common/example_helpers.h>
 
-#include "RtpVideo.hpp"
 
 namespace view
 {

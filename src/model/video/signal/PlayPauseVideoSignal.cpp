@@ -6,6 +6,10 @@ namespace video
 {
 namespace signal
 {
+PlayPauseVideoSignal::PlayPauseVideoSignal(bool isPlayingVideo) :
+    mIsPlayingVideo(isPlayingVideo)
+{
+}
 
 } // namespace signal
 } // namespace video

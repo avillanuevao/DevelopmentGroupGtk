@@ -5,6 +5,7 @@
 #include <view/ui/MainWindow.hpp>
 #include <view/communication/video/RtpVideo.hpp>
 #include <controller/video/ShowHideFPSController.hpp>
+#include <controller/video/PlayPauseVideoController.hpp>
 #include <model/video/Video.hpp>
 
 view::communication::video::RtpVideo* mRtpVideo = nullptr;
@@ -41,12 +42,16 @@ int main(int argc, char *argv[])
   std::shared_ptr<controller::video::ShowHideFPSVideoController> mShowHideFPSVideoController =
     std::make_shared<controller::video::ShowHideFPSVideoController>(
       controller::video::ShowHideFPSVideoController(mVideoModel));
+  
+  std::shared_ptr<controller::video::PlayPauseVideoController> mPlayPauseVideoController =
+    std::make_shared<controller::video::PlayPauseVideoController>(
+      controller::video::PlayPauseVideoController(mVideoModel));
 
   signal(SIGINT, signalHandler);
   signal(SIGTERM, signalHandler);
 
   int exit = app->make_window_and_run<view::ui::MainWindow>(argc, argv, mRtpVideo, mVideoModel,
-    mShowHideFPSVideoController);
+    mShowHideFPSVideoController, mPlayPauseVideoController);
 
   mRtpVideo->stopCapture();
 
