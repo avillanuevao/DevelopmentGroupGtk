@@ -34,9 +34,11 @@ private:
   void initializeRtp();
   void paintSquare(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height);
   void paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height);
+  void connectTimeout();
 
   view::communication::video::RtpVideo* mRtpVideo;
   cairo_surface_t* mSurface_t;
+  sigc::connection mTimeoutConnection;
   
 };
 

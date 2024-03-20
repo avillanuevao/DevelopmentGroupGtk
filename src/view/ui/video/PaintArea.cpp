@@ -15,7 +15,7 @@ PaintArea::PaintArea(view::communication::video::RtpVideo* rtpVideo)
 {
   initializeRtp();
 
-  Glib::signal_timeout().connect(sigc::mem_fun(*this, &PaintArea::on_timeout), mRtpVideo->frameRateToMillisec()); 
+  connectTimeout();
   set_draw_func(sigc::mem_fun(*this, &PaintArea::on_draw));
 }
 
@@ -32,17 +32,14 @@ bool PaintArea::on_timeout()
 }
 
 void PaintArea::recievedSignal(model::video::signal::PlayPauseVideoSignal signal)
-{
-  std::cout << "recievedSignal " << std::endl;
-  bool isPlayingVideo = signal.getIsPlayingVideo();
-
-  if(isPlayingVideo)
+{  
+  if(signal.getIsPlayingVideo())
   {
-
+    connectTimeout();
   }
   else
   {
-    mRtpVideo->stopCapture();
+    mTimeoutConnection.disconnect();
   }
 }
 
@@ -91,7 +88,6 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
     auto surface = Cairo::RefPtr<Cairo::Surface>(new Cairo::Surface(mSurface_t));
     cr->set_source(surface, 0, 0);
     cr->paint();
-        
   } 
   else 
   {
@@ -103,7 +99,11 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
     std::string no_stream = "No Stream " + mRtpVideo->session_name + ":" + mRtpVideo->ipaddr + ":" + std::to_string(mRtpVideo->port) + "\n";
     cr->show_text(no_stream.c_str());
   }
+}
 
+void PaintArea::connectTimeout()
+{
+  mTimeoutConnection = Glib::signal_timeout().connect(sigc::mem_fun(*this, &PaintArea::on_timeout), mRtpVideo->frameRateToMillisec()); 
 }
 
 void PaintArea::paintSquare(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)

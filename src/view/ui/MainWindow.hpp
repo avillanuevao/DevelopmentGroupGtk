@@ -31,7 +31,8 @@ private:
   Gtk::Box mHorizontalBox;
   Gtk::Box mVerticalBoxPaintArea;
   Gtk::Box mVerticalBoxButtons;
-  view::ui::video::PaintArea mPaintArea;
+  std::shared_ptr<model::video::Video> mVideoModel;
+  std::shared_ptr<view::ui::video::PaintArea> mPaintArea;
   view::ui::video::ShowHideFPSVideoView mButtonShowHideFPSVideoView;
   view::ui::video::PlayPauseVideoView mButtonPlayPauseVideoView;
 };
