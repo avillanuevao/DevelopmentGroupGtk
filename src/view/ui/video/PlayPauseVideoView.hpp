@@ -28,11 +28,14 @@ class PlayPauseVideoView :
     
   private:
     void updateLabel();
+    void addImages();
     
     std::shared_ptr<model::video::Video> mModel;
     std::shared_ptr<controller::video::PlayPauseVideoController> mController;
     Glib::ustring mLabelPlay = "Play Video";
     Glib::ustring mLabelPause = "Pause Video";
+    Gtk::Image mPlayImage;
+    Gtk::Image mPauseImage;
 };
 
 } // namespace video

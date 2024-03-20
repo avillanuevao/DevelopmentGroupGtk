@@ -10,7 +10,7 @@ MainWindow::MainWindow(view::communication::video::RtpVideo* rtpVideo,
   std::shared_ptr<controller::video::ShowHideFPSVideoController> showHideFPSVideoController,
   std::shared_ptr<controller::video::PlayPauseVideoController> playPauseVideoController) : 
     mHorizontalBox(Gtk::Orientation::HORIZONTAL),
-    mVerticalBox(Gtk::Orientation::VERTICAL),
+    mVerticalBoxButtons(Gtk::Orientation::VERTICAL),
     mPaintArea(rtpVideo),
     mButtonShowHideFPSVideoView(videoModel, showHideFPSVideoController),
     mButtonPlayPauseVideoView(videoModel, playPauseVideoController)
@@ -22,15 +22,15 @@ MainWindow::MainWindow(view::communication::video::RtpVideo* rtpVideo,
   mPaintArea.set_content_width(640);
   mPaintArea.set_content_height(480);
 
-  mVerticalBox.set_spacing(10);
-  mVerticalBox.set_expand(true);
-  mVerticalBox.append(mButtonShowHideFPSVideoView);
-  mVerticalBox.append(mButtonPlayPauseVideoView);
+  mVerticalBoxButtons.set_expand(true);
+
+  mVerticalBoxButtons.append(mButtonShowHideFPSVideoView);
+  mVerticalBoxButtons.append(mButtonPlayPauseVideoView);
   
   mVerticalBoxPaintArea.append(mPaintArea);
 
   mHorizontalBox.append(mVerticalBoxPaintArea);
-  mHorizontalBox.append(mVerticalBox);
+  mHorizontalBox.append(mVerticalBoxButtons);
   set_child(mHorizontalBox);
 }
 

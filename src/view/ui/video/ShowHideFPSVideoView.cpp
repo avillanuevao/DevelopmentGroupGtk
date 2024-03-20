@@ -11,8 +11,12 @@ ShowHideFPSVideoView::ShowHideFPSVideoView(std::shared_ptr<model::video::Video> 
     mModel(model),
     mController(controller)
 {
+  set_size_request(100, 50);
   set_halign(Gtk::Align::CENTER);
+  set_margin_top(10);
+
   updateLabel();
+
   signal_clicked().connect(sigc::mem_fun(*this, &ShowHideFPSVideoView::onClicked));
 }
 

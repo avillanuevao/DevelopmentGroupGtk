@@ -29,8 +29,8 @@ public:
 
 private:
   Gtk::Box mHorizontalBox;
-  Gtk::Box mVerticalBox;
   Gtk::Box mVerticalBoxPaintArea;
+  Gtk::Box mVerticalBoxButtons;
   view::ui::video::PaintArea mPaintArea;
   view::ui::video::ShowHideFPSVideoView mButtonShowHideFPSVideoView;
   view::ui::video::PlayPauseVideoView mButtonPlayPauseVideoView;
