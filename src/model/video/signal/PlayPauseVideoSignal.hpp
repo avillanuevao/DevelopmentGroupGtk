@@ -15,6 +15,8 @@ class PlayPauseVideoSignal
   public:
     PlayPauseVideoSignal(bool isPlayingVideo);
 
+    bool getIsPlayingVideo();
+
   private:
     bool mIsPlayingVideo;
 };

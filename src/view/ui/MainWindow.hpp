@@ -1,6 +1,8 @@
 #ifndef VIEW_UI_MAINWINDOW_HPP
 #define VIEW_UI_MAINWINDOW_HPP
 
+#include <memory>
+
 #include <gtkmm/window.h>
 
 #include <view/ui/video/PaintArea.hpp>
@@ -9,6 +11,7 @@
 #include <controller/video/ShowHideFPSController.hpp>
 #include <controller/video/PlayPauseVideoController.hpp>
 #include <model/video/Video.hpp>
+#include <model/video/signal/PlayPauseVideoSignal.hpp>
 
 namespace view
 {
@@ -27,6 +30,7 @@ public:
 private:
   Gtk::Box mHorizontalBox;
   Gtk::Box mVerticalBox;
+  Gtk::Box mVerticalBoxPaintArea;
   view::ui::video::PaintArea mPaintArea;
   view::ui::video::ShowHideFPSVideoView mButtonShowHideFPSVideoView;
   view::ui::video::PlayPauseVideoView mButtonPlayPauseVideoView;

@@ -31,6 +31,21 @@ bool PaintArea::on_timeout()
   return true;
 }
 
+void PaintArea::recievedSignal(model::video::signal::PlayPauseVideoSignal signal)
+{
+  std::cout << "recievedSignal " << std::endl;
+  bool isPlayingVideo = signal.getIsPlayingVideo();
+
+  if(isPlayingVideo)
+  {
+
+  }
+  else
+  {
+    mRtpVideo->stopCapture();
+  }
+}
+
 void PaintArea::initializeRtp()
 {
   mSurface_t = cairo_image_surface_create(CAIRO_FORMAT_RGB24, mRtpVideo->width, mRtpVideo->height);

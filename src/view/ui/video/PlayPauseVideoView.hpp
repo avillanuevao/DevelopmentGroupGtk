@@ -17,7 +17,7 @@ namespace video
 {
 
 class PlayPauseVideoView :
-  public Gtk::Button
+  public Gtk::ToggleButton
 {
   public:
     PlayPauseVideoView(std::shared_ptr<model::video::Video> model,

@@ -15,19 +15,22 @@ MainWindow::MainWindow(view::communication::video::RtpVideo* rtpVideo,
     mButtonShowHideFPSVideoView(videoModel, showHideFPSVideoController),
     mButtonPlayPauseVideoView(videoModel, playPauseVideoController)
 {
+  //videoModel->utils::designPattern::SignalPublisher<model::video::signal::PlayPauseVideoSignal>::addSubscriber(mPaintArea);
   set_title("Video");
   set_default_size(800, 600);
 
   mPaintArea.set_content_width(640);
   mPaintArea.set_content_height(480);
 
+  mVerticalBox.set_spacing(10);
+  mVerticalBox.set_expand(true);
   mVerticalBox.append(mButtonShowHideFPSVideoView);
   mVerticalBox.append(mButtonPlayPauseVideoView);
+  
+  mVerticalBoxPaintArea.append(mPaintArea);
 
-  mHorizontalBox.set_spacing(10);
-  mHorizontalBox.append(mPaintArea);
+  mHorizontalBox.append(mVerticalBoxPaintArea);
   mHorizontalBox.append(mVerticalBox);
-
   set_child(mHorizontalBox);
 }
 

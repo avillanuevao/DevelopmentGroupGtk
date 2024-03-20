@@ -11,6 +11,11 @@ PlayPauseVideoSignal::PlayPauseVideoSignal(bool isPlayingVideo) :
 {
 }
 
+bool PlayPauseVideoSignal::getIsPlayingVideo()
+{
+    return mIsPlayingVideo;
+}
+
 } // namespace signal
 } // namespace video
 } // namespace model
