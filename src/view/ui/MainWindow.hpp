@@ -24,8 +24,9 @@ public:
 private:
   Gtk::Box mHorizontalBox;
   Gtk::Box mVerticalBox;
-  view::ui::video::PaintArea mPaintArea;
-  view::ui::video::ShowHideFPSVideoView mButtonShowHideFPSVideoView;
+  std::shared_ptr<model::video::Video> mVideoModel;
+  std::shared_ptr<view::ui::video::PaintArea> mPaintArea;
+  std::shared_ptr<view::ui::video::ShowHideFPSVideoView> mButtonShowHideFPSVideoView;
 };
 
 } // namespace ui
