@@ -1,6 +1,10 @@
 #ifndef VIEW_UI_VIDEO_PAINTAREA_HPP
 #define VIEW_UI_VIDEO_PAINTAREA_HPP
 
+#include <vector>
+#include <chrono>
+#include <numeric>
+
 #include <gtkmm.h>
 #include <gtkmm/drawingarea.h>
 #include <cairomm/context.h>
@@ -22,6 +26,7 @@ public:
 
   bool on_timeout();
 
+
 protected:
   void on_draw(const Cairo::RefPtr<Cairo::Context> &context, int width, int height);
 
@@ -32,7 +37,11 @@ private:
 
   view::communication::video::RtpVideo* mRtpVideo;
   cairo_surface_t* mSurface_t;
-  
+  std::vector<std::chrono::duration<double>> mTimestampFPS;
+  int mFPS;
+  int kFrameCount = 60;
+  std::chrono::system_clock::time_point mStart;
+  std::chrono::system_clock::time_point mEnd;
 };
 
 } // namespace video

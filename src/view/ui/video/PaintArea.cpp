@@ -45,8 +45,46 @@ void PaintArea::initializeRtp()
 
 void PaintArea::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
 {
+  // En milisegundos
+  auto start = std::chrono::high_resolution_clock::now();
+  mEnd = std::chrono::high_resolution_clock::now();
+  
   // paintSquare(cr, width, height);
   paintVideo(cr, width, height);
+
+  // std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+  // En milisegundos
+  auto end = std::chrono::high_resolution_clock::now();
+  if(mTimestampFPS.size() <= kFrameCount)
+  {
+    // Debería dar en torno a 40ms
+    std::chrono::duration<double> interval{end - start};
+    if(mEnd > mStart)
+    {
+      interval += (mEnd - mStart);
+    }
+
+    // std::cout << "IntervalDurationDouble: " << interval.count()*1000 << std::endl;
+    mTimestampFPS.push_back(interval);
+  }
+  else
+  {
+    // Tendría que sumar lo que tarda el PaintVideo y lo que tarda el onDraw
+    // result = std::reduce(mTimestampFPS.begin(), mTimestampFPS.end()) + (mStart - mEnd)
+
+    auto resultDuration = std::reduce(mTimestampFPS.begin(), mTimestampFPS.end());
+    std::chrono::milliseconds second = std::chrono::milliseconds(1000);
+
+    mTimestampFPS.clear();
+
+    mFPS = kFrameCount / resultDuration.count();
+
+    std::cout << "FPS        : " << mFPS << std::endl;
+    std::cout << "------------------" << std::endl;
+  }
+
+  mStart = std::chrono::high_resolution_clock::now();
 }
 
 void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
