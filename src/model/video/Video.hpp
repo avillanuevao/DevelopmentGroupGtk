@@ -20,9 +20,9 @@ class Video :
     Video();
 
     void setIsShowingFPS(bool value);
-    bool getIsShowingFPS();
+    bool getIsShowingFPS() const;
     void setIsPlayingVideo(bool value);
-    bool getIsPlayingVideo();
+    bool getIsPlayingVideo() const;
 
   private:
     bool mIsShowingFPS;

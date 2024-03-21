@@ -13,10 +13,10 @@ PaintArea::PaintArea(view::communication::video::RtpVideo* rtpVideo)
   : mRtpVideo(rtpVideo),
     mSurface_t(nullptr),
     mFPS(0),
-    isShowingFPS(false)
+    isShowingFPS(false),
+    mTimeoutSignal(Glib::signal_timeout())
 {
   initializeRtp();
-
   connectTimeout();
   set_draw_func(sigc::mem_fun(*this, &PaintArea::on_draw));
 }
@@ -40,13 +40,13 @@ void PaintArea::recievedSignal(model::video::signal::ShowHideFPSSignal signal)
 
 void PaintArea::recievedSignal(model::video::signal::PlayPauseVideoSignal signal)
 {  
-  if(signal.getIsPlayingVideo())
+  if (signal.mustPlayVideo())
   {
     connectTimeout();
   }
   else
   {
-    mTimeoutConnection.disconnect();
+    disconnectTimeout();
   }
 }
 
@@ -67,7 +67,6 @@ void PaintArea::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int 
   mEnd = std::chrono::high_resolution_clock::now();
   
   paintVideo(cr, width, height);
-  // paintSquare(cr, 80, 80);
   drawFPS(cr, 10, 10);
 
   auto end = std::chrono::high_resolution_clock::now();
@@ -127,7 +126,19 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
 
 void PaintArea::connectTimeout()
 {
-  mTimeoutConnection = Glib::signal_timeout().connect(sigc::mem_fun(*this, &PaintArea::on_timeout), mRtpVideo->frameRateToMillisec()); 
+  if (!mTimeoutConnection.connected())
+  {
+    mTimeoutConnection = mTimeoutSignal.connect(sigc::mem_fun(*this, &PaintArea::on_timeout), 
+                                                mRtpVideo->frameRateToMillisec()); 
+  }
+}
+
+void PaintArea::disconnectTimeout()
+{
+  if (mTimeoutConnection.connected())
+  {
+    mTimeoutConnection.disconnect();
+  }
 }
 
 void PaintArea::drawFPS(const Cairo::RefPtr<Cairo::Context> &context, int x, int y)
@@ -136,33 +147,6 @@ void PaintArea::drawFPS(const Cairo::RefPtr<Cairo::Context> &context, int x, int
   {
     drawText(context, "FPS: " + Glib::ustring::format(mFPS), x, y);
   }
-}
-
-void PaintArea::paintSquare(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
-{
-  /* a custom shape that could be wrapped in a function */
-  double x         = 0,        /* parameters like cairo_rectangle */
-        y         = 0,
-        aspect        = 1.0,     /* aspect ratio */
-        corner_radius = height / 10.0;   /* and corner curvature radius */
-
-
-
-  double radius = corner_radius / aspect;
-  double degrees = M_PI / 180.0;
-
-  cr->arc(x + width - radius, y + radius, radius, -90 * degrees, 0 * degrees);
-  cr->arc(x + width - radius, y + radius, radius, -90 * degrees, 0 * degrees);
-  cr->arc(x + width - radius, y + height - radius, radius, 0 * degrees, 90 * degrees);
-  cr->arc(x + radius, y + height - radius, radius, 90 * degrees, 180 * degrees);
-  cr->arc(x + radius, y + radius, radius, 180 * degrees, 270 * degrees);
-  cr->close_path();
-
-  cr->set_source_rgb(0.5, 0.5, 1);
-  cr->fill_preserve();
-  cr->set_source_rgba(0.5, 0, 0, 0.5);
-  cr->set_line_width(10.0);
-  cr->stroke();
 }
 
 void PaintArea::drawText(const Cairo::RefPtr<Cairo::Context> &context, Glib::ustring text, int xPosition,

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include <fstream>
 
 #include <gtkmm.h>
 
@@ -20,20 +21,25 @@ class PlayPauseVideoView :
   public Gtk::ToggleButton
 {
   public:
-    PlayPauseVideoView(std::shared_ptr<model::video::Video> model,
-                      std::shared_ptr<controller::video::PlayPauseVideoController> controller);
+    PlayPauseVideoView(const std::shared_ptr<model::video::Video> videoModel,
+                      std::shared_ptr<controller::video::PlayPauseVideoController> playPauseVideoController);
 
   protected:
     void onClicked();
     
   private:
+    void setButtonProperties();
+    void loadImages();
     void updateLabel();
-    void addImages();
+    void addImage(std::string imagePath);
+    void checkImageExistence(std::string imagePath);
     
-    std::shared_ptr<model::video::Video> mModel;
-    std::shared_ptr<controller::video::PlayPauseVideoController> mController;
-    Glib::ustring mLabelPlay = "Play Video";
-    Glib::ustring mLabelPause = "Pause Video";
+    const std::shared_ptr<model::video::Video> mVideoModel;
+    std::shared_ptr<controller::video::PlayPauseVideoController> mPlayPauseVideoController;
+
+    const std::string mPlayImagePath = "../../../../res/ui/play.png";
+    const std::string mPauseImagePath = "../../../../res/ui/pause.png";
+
     Gtk::Image mPlayImage;
     Gtk::Image mPauseImage;
 };

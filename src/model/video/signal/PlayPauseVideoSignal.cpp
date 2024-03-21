@@ -6,14 +6,14 @@ namespace video
 {
 namespace signal
 {
-PlayPauseVideoSignal::PlayPauseVideoSignal(bool isPlayingVideo) :
-    mIsPlayingVideo(isPlayingVideo)
+PlayPauseVideoSignal::PlayPauseVideoSignal(bool mustPlayVideo) :
+    mMustPlayVideo(mustPlayVideo)
 {
 }
 
-bool PlayPauseVideoSignal::getIsPlayingVideo()
+bool PlayPauseVideoSignal::mustPlayVideo() const
 {
-    return mIsPlayingVideo;
+    return mMustPlayVideo;
 }
 
 } // namespace signal

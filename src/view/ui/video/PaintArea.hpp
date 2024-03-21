@@ -39,21 +39,23 @@ protected:
 
 private:
   void initializeRtp();
-  void paintSquare(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height);
   void paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height);
   void drawFPS(const Cairo::RefPtr<Cairo::Context> &context, int x, int y);
   void drawText(const Cairo::RefPtr<Cairo::Context> &context, Glib::ustring text, int xPosition, 
                 int yPosition);
-  void connectTimeout();
 
-  int kFrameCount = 60;
+  void connectTimeout();
+  void disconnectTimeout();
+
   view::communication::video::RtpVideo* mRtpVideo;
   cairo_surface_t* mSurface_t;
-  std::vector<std::chrono::duration<double>> mTimestampFPS;
   int mFPS;
+  bool isShowingFPS;
+  Glib::SignalTimeout mTimeoutSignal;
+  int kFrameCount = 60;
+  std::vector<std::chrono::duration<double>> mTimestampFPS;
   std::chrono::system_clock::time_point mStart;
   std::chrono::system_clock::time_point mEnd;
-  bool isShowingFPS;
   sigc::connection mTimeoutConnection;
 };
 

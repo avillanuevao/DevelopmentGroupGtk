@@ -18,7 +18,7 @@ void Video::setIsShowingFPS(bool value)
   utils::designPattern::SignalPublisher<model::video::signal::ShowHideFPSSignal>::notifySubscribers(signal);
 }
 
-bool Video::getIsShowingFPS()
+bool Video::getIsShowingFPS() const 
 {
   return mIsShowingFPS;
 }
@@ -31,7 +31,7 @@ void Video::setIsPlayingVideo(bool value)
   utils::designPattern::SignalPublisher<model::video::signal::PlayPauseVideoSignal>::notifySubscribers(signal);
 }
 
-bool Video::getIsPlayingVideo()
+bool Video::getIsPlayingVideo() const
 {
     return mIsPlayingVideo;
 }

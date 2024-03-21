@@ -13,12 +13,12 @@ namespace signal
 class PlayPauseVideoSignal
 {
   public:
-    PlayPauseVideoSignal(bool isPlayingVideo);
+    PlayPauseVideoSignal(bool mustPlayVideo);
 
-    bool getIsPlayingVideo();
+    bool mustPlayVideo() const;
 
   private:
-    bool mIsPlayingVideo;
+    bool mMustPlayVideo;
 };
 
 } // namespace signal

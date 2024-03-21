@@ -6,31 +6,44 @@ namespace ui
 {
 namespace video 
 {
-PlayPauseVideoView::PlayPauseVideoView(std::shared_ptr<model::video::Video> model, 
-                                    std::shared_ptr<controller::video::PlayPauseVideoController> controller) :
-    mModel(model), mController(controller)
+PlayPauseVideoView::PlayPauseVideoView(const std::shared_ptr<model::video::Video> videoModel, 
+                                    std::shared_ptr<controller::video::PlayPauseVideoController> playPauseVideoController) :
+    mVideoModel(videoModel), mPlayPauseVideoController(playPauseVideoController)
 { 
-  set_halign(Gtk::Align::CENTER);
-  set_size_request(100, 50);
-  set_margin_top(10);
+  setButtonProperties();
 
-  addImages();
-
-  updateLabel();
-    
-  signal_clicked().connect(sigc::mem_fun(*this, &PlayPauseVideoView::onClicked));
-
+  loadImages();
 }
 
 void PlayPauseVideoView::onClicked()
 {
-  mController->playPauseVideo();
+  mPlayPauseVideoController->playPauseVideo();
   updateLabel();
+}
+
+void PlayPauseVideoView::setButtonProperties()
+{
+  set_halign(Gtk::Align::CENTER);
+  set_size_request(100, 50);
+  set_margin_top(10);
+
+  signal_clicked().connect(sigc::mem_fun(*this, &PlayPauseVideoView::onClicked));
+
+  updateLabel();
+}
+
+void PlayPauseVideoView::loadImages()
+{
+  checkImageExistence(mPlayImagePath);
+  checkImageExistence(mPauseImagePath);
+
+  addImage(mPlayImagePath);
+  addImage(mPauseImagePath);
 }
 
 void PlayPauseVideoView::updateLabel()
 {
-  if(mModel->getIsPlayingVideo())
+  if (mVideoModel->getIsPlayingVideo())
   {
     set_active(true);
     set_child(mPauseImage);
@@ -42,12 +55,28 @@ void PlayPauseVideoView::updateLabel()
   }
 }
 
-void PlayPauseVideoView::addImages()
+void PlayPauseVideoView::addImage(std::string imagePath)
 {
-  mPlayImage.set("../../../image/play.png");
-  mPauseImage.set("../../../image/pause.png");
+  if (imagePath == mPlayImagePath)
+  {
+    mPlayImage.set(mPlayImagePath);
+  } 
+  else if (imagePath == mPauseImagePath)
+  {
+    mPauseImage.set(mPauseImagePath);
+  }
 }
 
-}// namespace video
+void PlayPauseVideoView::checkImageExistence(std::string imagePath)
+{
+  std::ifstream file(imagePath);
+
+  if (!file.good())
+  {
+    std::cerr << "Error loading image: " << imagePath << std::endl;
+  }
+}
+
+} // namespace video
 } // namespace ui
 } // namespace view
