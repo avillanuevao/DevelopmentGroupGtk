@@ -42,6 +42,7 @@ class PaintArea :
     const size_t kFrameCount = 60;
     const int kXFPS = 10;
     const int kYFPS = 10;
+  void drawChronometer(const Cairo::RefPtr<Cairo::Context> &context, int x, int y);
 
     void initializeRtp();
     void paintVideo(const Cairo::RefPtr<Cairo::Context> &cr);
@@ -61,6 +62,7 @@ class PaintArea :
     std::chrono::system_clock::time_point mTimestampFPSStart;
     std::chrono::system_clock::time_point mTimestampFPSEnd;
     sigc::connection mTimeoutConnection;
+  std::chrono::system_clock::time_point mChronometerStart;
 };
 
 } // namespace video

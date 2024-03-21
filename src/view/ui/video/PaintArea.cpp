@@ -15,6 +15,7 @@ PaintArea::PaintArea(view::communication::video::RtpVideo* rtpVideo)
 {
   initializeRtp();
   connectTimeout();
+  mChronometerStart = std::chrono::high_resolution_clock::now();
   set_draw_func(sigc::mem_fun(*this, &PaintArea::on_draw));
 }
 
@@ -147,7 +148,12 @@ void PaintArea::paintFPS(const Cairo::RefPtr<Cairo::Context> &context, int x, in
   }
 }
 
-void PaintArea::paintText(const Cairo::RefPtr<Cairo::Context> &context, Glib::ustring text, int xPosition,
+void PaintArea::drawChronometer(const Cairo::RefPtr<Cairo::Context> &context, int x, int y)
+{
+
+}
+
+void PaintArea::drawText(const Cairo::RefPtr<Cairo::Context> &context, Glib::ustring text, int xPosition,
                       int yPosition)
 {
   Pango::FontDescription font;
