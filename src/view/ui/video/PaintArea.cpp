@@ -9,11 +9,8 @@ namespace ui
 namespace video
 {
 
-PaintArea::PaintArea(view::communication::video::RtpVideo* rtpVideo)
-  : mRtpVideo(rtpVideo),
-    mSurface_t(nullptr),
-    mFPS(0),
-    isShowingFPS(false)
+PaintArea::PaintArea(view::communication::video::RtpVideo* rtpVideo) : 
+  mRtpVideo(rtpVideo), mSurface_t(nullptr), mFPS(0), mIsShowingFPS(false)
 {
   initializeRtp();
 
@@ -35,7 +32,7 @@ bool PaintArea::on_timeout()
 
 void PaintArea::recievedSignal(model::video::signal::ShowHideFPSSignal signal)
 {
-  isShowingFPS = signal.getIsShowingFPSVideo();
+  mIsShowingFPS = signal.getIsShowingFPSVideo();
 }
 
 void PaintArea::recievedSignal(model::video::signal::PlayPauseVideoSignal signal)
@@ -64,28 +61,12 @@ void PaintArea::initializeRtp()
 
 void PaintArea::on_draw(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
 {
-  mEnd = std::chrono::high_resolution_clock::now();
-  
-  paintVideo(cr, width, height);
-  // paintSquare(cr, 80, 80);
-  drawFPS(cr, 10, 10);
-
-  auto end = std::chrono::high_resolution_clock::now();
-  if(mTimestampFPS.size() <= kFrameCount)
-  {
-    mTimestampFPS.push_back(std::chrono::duration<double>((end - mEnd) + (mEnd - mStart)));    
-  }
-  else
-  {
-    mFPS = kFrameCount / std::reduce(mTimestampFPS.begin(), mTimestampFPS.end()).count();
-    
-    mTimestampFPS.clear();
-  }
-
-  mStart = std::chrono::high_resolution_clock::now();
+  paintVideo(cr);
+  paintFPS(cr, kXFPS, kYFPS);
+  calculateFPS();
 }
 
-void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
+void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr)
 {
   // Fill the surface with video data if available
   if (mRtpVideo->receiveRtp()) 
@@ -116,12 +97,10 @@ void PaintArea::paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, i
   else 
   {
     // Timedout
-    cr->select_font_face("Courier", Cairo::ToyFontFace::Slant::NORMAL, Cairo::ToyFontFace::Weight::BOLD);
-    cr->set_font_size(24);
-    cr->move_to(20, 50);
 
-    std::string no_stream = "No Stream " + mRtpVideo->session_name + ":" + mRtpVideo->ipaddr + ":" + std::to_string(mRtpVideo->port) + "\n";
-    cr->show_text(no_stream.c_str());
+    std::string no_stream = "No Stream " + mRtpVideo->session_name + ":" + mRtpVideo->ipaddr + ":" 
+                            + std::to_string(mRtpVideo->port) + "\n";
+    paintText(cr, Glib::ustring(no_stream), 20, 50);
   }
 }
 
@@ -130,57 +109,43 @@ void PaintArea::connectTimeout()
   mTimeoutConnection = Glib::signal_timeout().connect(sigc::mem_fun(*this, &PaintArea::on_timeout), mRtpVideo->frameRateToMillisec()); 
 }
 
-void PaintArea::drawFPS(const Cairo::RefPtr<Cairo::Context> &context, int x, int y)
+void PaintArea::calculateFPS()
 {
-  if(isShowingFPS)
+  mTimestampFPSEnd = std::chrono::high_resolution_clock::now();
+
+  if (mTimestampFPS.size() <= kFrameCount)
   {
-    drawText(context, "FPS: " + Glib::ustring::format(mFPS), x, y);
+    mTimestampFPS.push_back(std::chrono::duration<double>(mTimestampFPSEnd - mTimestampFPSStart));    
+  }
+  else
+  {
+    mFPS = kFrameCount / std::reduce(mTimestampFPS.begin(), mTimestampFPS.end()).count();
+    
+    mTimestampFPS.clear();
+  }
+
+  mTimestampFPSStart = std::chrono::high_resolution_clock::now();
+}
+
+void PaintArea::paintFPS(const Cairo::RefPtr<Cairo::Context> &context, int x, int y)
+{
+  if(mIsShowingFPS)
+  {
+    paintText(context, "FPS: " + Glib::ustring::format(mFPS), x, y);
   }
 }
 
-void PaintArea::paintSquare(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height)
-{
-  /* a custom shape that could be wrapped in a function */
-  double x         = 0,        /* parameters like cairo_rectangle */
-        y         = 0,
-        aspect        = 1.0,     /* aspect ratio */
-        corner_radius = height / 10.0;   /* and corner curvature radius */
-
-
-
-  double radius = corner_radius / aspect;
-  double degrees = M_PI / 180.0;
-
-  cr->arc(x + width - radius, y + radius, radius, -90 * degrees, 0 * degrees);
-  cr->arc(x + width - radius, y + radius, radius, -90 * degrees, 0 * degrees);
-  cr->arc(x + width - radius, y + height - radius, radius, 0 * degrees, 90 * degrees);
-  cr->arc(x + radius, y + height - radius, radius, 90 * degrees, 180 * degrees);
-  cr->arc(x + radius, y + radius, radius, 180 * degrees, 270 * degrees);
-  cr->close_path();
-
-  cr->set_source_rgb(0.5, 0.5, 1);
-  cr->fill_preserve();
-  cr->set_source_rgba(0.5, 0, 0, 0.5);
-  cr->set_line_width(10.0);
-  cr->stroke();
-}
-
-void PaintArea::drawText(const Cairo::RefPtr<Cairo::Context> &context, Glib::ustring text, int xPosition,
+void PaintArea::paintText(const Cairo::RefPtr<Cairo::Context> &context, Glib::ustring text, int xPosition,
                       int yPosition)
 {
-  // Pango::FontDescription sirve para establecer el tipo de fuente y diferentes características del texto 
-  // como si es en negrita, cursiva, tamaño...
   Pango::FontDescription font;
   font.set_family("Monospace");
   font.set_weight(Pango::Weight::BOLD);
   font.set_absolute_size(20 * PANGO_SCALE);
 
-  // Creamos el Layout donde se pintara el texto. El tamaño del layout se calcurá en función del texto que 
-  // tenga dentro
   Glib::RefPtr<Pango::Layout> layout = create_pango_layout(text);
   layout->set_font_description(font);
 
-  // Nos posicionamos donde queremos pintar y pintamos
   context->set_source_rgb(0, 0, 0);
   context->move_to(xPosition, yPosition);
   layout->show_in_cairo_context(context);
