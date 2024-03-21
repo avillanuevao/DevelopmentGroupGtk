@@ -33,8 +33,8 @@ private:
   Gtk::Box mVerticalBoxButtons;
   std::shared_ptr<model::video::Video> mVideoModel;
   std::shared_ptr<view::ui::video::PaintArea> mPaintArea;
-  view::ui::video::ShowHideFPSVideoView mButtonShowHideFPSVideoView;
   view::ui::video::PlayPauseVideoView mButtonPlayPauseVideoView;
+  std::shared_ptr<view::ui::video::ShowHideFPSVideoView> mButtonShowHideFPSVideoView;
 };
 
 } // namespace ui

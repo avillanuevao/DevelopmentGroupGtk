@@ -13,14 +13,15 @@ MainWindow::MainWindow(view::communication::video::RtpVideo* rtpVideo,
     mVerticalBoxButtons(Gtk::Orientation::VERTICAL),
     mVideoModel(videoModel),
     mPaintArea(std::make_shared<view::ui::video::PaintArea>(rtpVideo)),
-    mButtonShowHideFPSVideoView(videoModel, showHideFPSVideoController),
     mButtonPlayPauseVideoView(videoModel, playPauseVideoController)
+    mButtonShowHideFPSVideoView(std::make_shared<view::ui::video::ShowHideFPSVideoView>(videoModel, showHideFPSVideoController))
 {
   set_title("Video");
   set_default_size(800, 600);
 
   mVideoModel->
     utils::designPattern::SignalPublisher<model::video::signal::PlayPauseVideoSignal>::addSubscriber(mPaintArea);
+  mVideoModel->addSubscriber(mPaintArea);
 
   mPaintArea->set_content_width(640);
   mPaintArea->set_content_height(480);
