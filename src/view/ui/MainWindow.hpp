@@ -29,10 +29,10 @@ public:
   virtual ~MainWindow();
 
 private:
-  int kWidthWindow = 800;
-  int kHeigthWindow = 600;
-  int kWidhtVideo = 640;
-  int kHeigthVideo = 480;
+  const int kWidthWindow = 800;
+  const int kHeigthWindow = 600;
+  const int kWidhtVideo = 640;
+  const int kHeigthVideo = 480;
 
   void windowConfiguration();
   void initializeUIComponents();

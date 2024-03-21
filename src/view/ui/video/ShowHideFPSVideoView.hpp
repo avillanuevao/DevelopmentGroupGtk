@@ -21,20 +21,25 @@ class ShowHideFPSVideoView :
   public Gtk::Button
 {
   public:
-    ShowHideFPSVideoView(std::shared_ptr<model::video::Video> model, 
-      std::shared_ptr<controller::video::ShowHideFPSVideoController> controller);
+    ShowHideFPSVideoView(std::shared_ptr<model::video::Video> videoModel, 
+      std::shared_ptr<controller::video::ShowHideFPSVideoController> showHideFPSVideoController);
     virtual ~ShowHideFPSVideoView();
 
   protected:
     void onClicked();
 
   private:
+    const Glib::ustring kLabelShow = "Show FPS";
+    const Glib::ustring kLabelHide = "Hide FPS";
+    const int kWidthButton = 100;
+    const int kHeigthButton = 50;
+    const int kMarginTop = 10;
+
+    void buttonConfiguration();
     void updateLabel();
 
-    std::shared_ptr<model::video::Video> mModel;
-    std::shared_ptr<controller::video::ShowHideFPSVideoController> mController;
-    Glib::ustring mLabelShow = "Show FPS";
-    Glib::ustring mLabelHide = "Hide FPS";
+    const std::shared_ptr<model::video::Video> mVideoModel;
+    std::shared_ptr<controller::video::ShowHideFPSVideoController> mShowHideFPSVideoController;
 };
 
 } // namespace video

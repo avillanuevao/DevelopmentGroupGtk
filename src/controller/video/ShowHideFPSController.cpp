@@ -4,14 +4,14 @@ namespace controller
 {
 namespace video 
 {
-ShowHideFPSVideoController::ShowHideFPSVideoController(std::shared_ptr<model::video::Video> model) :
-    mModel(model)
+ShowHideFPSVideoController::ShowHideFPSVideoController(std::shared_ptr<model::video::Video> videoModel) :
+    mVideoModel(videoModel)
 {
 }
 
 void ShowHideFPSVideoController::showHideFPSVideo()
 {
-    mModel->setIsShowingFPS(!mModel->getIsShowingFPS());
+    mVideoModel->setIsShowingFPS(!mVideoModel->getIsShowingFPS());
 }
 
 } // namespace video
