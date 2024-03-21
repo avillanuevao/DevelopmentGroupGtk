@@ -21,8 +21,11 @@ class Video :
 
     void setIsShowingFPS(bool value);
     bool getIsShowingFPS() const;
-    void setIsPlayingVideo(bool value);
-    bool getIsPlayingVideo() const;
+    void playVideo();
+    void stopVideo();
+    bool isPlayingVideo() const;
+
+    void notifyPlayPauseVideo();
 
   private:
     bool mIsShowingFPS;

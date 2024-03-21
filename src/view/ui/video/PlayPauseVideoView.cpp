@@ -43,7 +43,7 @@ void PlayPauseVideoView::loadImages()
 
 void PlayPauseVideoView::updateLabel()
 {
-  if (mVideoModel->getIsPlayingVideo())
+  if (mVideoModel->isPlayingVideo())
   {
     set_active(true);
     set_child(mPauseImage);

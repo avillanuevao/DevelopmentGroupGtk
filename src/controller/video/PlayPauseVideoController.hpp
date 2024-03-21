@@ -14,12 +14,12 @@ namespace video
 class PlayPauseVideoController
 {
   public:
-    PlayPauseVideoController(std::shared_ptr<model::video::Video> model);
+    PlayPauseVideoController(std::shared_ptr<model::video::Video> videoModel);
 
     void playPauseVideo();
 
   private:
-    std::shared_ptr<model::video::Video> mModel;
+    std::shared_ptr<model::video::Video> mVideoModel;
 };
 
 } // namespace video

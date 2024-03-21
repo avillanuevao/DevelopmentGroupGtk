@@ -23,17 +23,29 @@ bool Video::getIsShowingFPS() const
   return mIsShowingFPS;
 }
 
-void Video::setIsPlayingVideo(bool value)
+void Video::playVideo()
 {
-  mIsPlayingVideo = value;
+  mIsPlayingVideo = true;
   
-  model::video::signal::PlayPauseVideoSignal signal(mIsPlayingVideo);
-  utils::designPattern::SignalPublisher<model::video::signal::PlayPauseVideoSignal>::notifySubscribers(signal);
+  notifyPlayPauseVideo();
 }
 
-bool Video::getIsPlayingVideo() const
+void Video::stopVideo()
+{
+  mIsPlayingVideo = false;
+  
+  notifyPlayPauseVideo();
+}
+
+bool Video::isPlayingVideo() const
 {
     return mIsPlayingVideo;
+}
+
+void Video::notifyPlayPauseVideo()
+{
+  model::video::signal::PlayPauseVideoSignal signal(mIsPlayingVideo);
+  utils::designPattern::SignalPublisher<model::video::signal::PlayPauseVideoSignal>::notifySubscribers(signal);
 }
 
 } // namespace video

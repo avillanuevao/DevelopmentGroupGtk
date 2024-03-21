@@ -4,14 +4,21 @@ namespace controller
 {
 namespace video 
 {
-PlayPauseVideoController::PlayPauseVideoController(std::shared_ptr<model::video::Video> model) :
-    mModel(model)
+PlayPauseVideoController::PlayPauseVideoController(std::shared_ptr<model::video::Video> videoModel) :
+  mVideoModel(videoModel)
 {
 }
 
 void PlayPauseVideoController::playPauseVideo()
 {
-    mModel->setIsPlayingVideo(!mModel->getIsPlayingVideo());
+  if (mVideoModel->isPlayingVideo())
+  {
+    mVideoModel->stopVideo();
+  }
+  else
+  {
+    mVideoModel->playVideo();
+  }
 }
 
 } // namespace video
