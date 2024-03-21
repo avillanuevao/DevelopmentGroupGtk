@@ -18,6 +18,7 @@ PaintArea::PaintArea(view::communication::video::RtpVideo* rtpVideo)
   initializeRtp();
 
   connectTimeout();
+  mChronometerStart = std::chrono::high_resolution_clock::now();
   set_draw_func(sigc::mem_fun(*this, &PaintArea::on_draw));
 }
 
@@ -163,6 +164,11 @@ void PaintArea::paintSquare(const Cairo::RefPtr<Cairo::Context> &cr, int width, 
   cr->set_source_rgba(0.5, 0, 0, 0.5);
   cr->set_line_width(10.0);
   cr->stroke();
+}
+
+void PaintArea::drawChronometer(const Cairo::RefPtr<Cairo::Context> &context, int x, int y)
+{
+
 }
 
 void PaintArea::drawText(const Cairo::RefPtr<Cairo::Context> &context, Glib::ustring text, int xPosition,

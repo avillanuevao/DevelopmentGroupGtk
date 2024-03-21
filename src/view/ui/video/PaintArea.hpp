@@ -42,6 +42,7 @@ private:
   void paintSquare(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height);
   void paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height);
   void drawFPS(const Cairo::RefPtr<Cairo::Context> &context, int x, int y);
+  void drawChronometer(const Cairo::RefPtr<Cairo::Context> &context, int x, int y);
   void drawText(const Cairo::RefPtr<Cairo::Context> &context, Glib::ustring text, int xPosition, 
                 int yPosition);
   void connectTimeout();
@@ -55,6 +56,7 @@ private:
   std::chrono::system_clock::time_point mEnd;
   bool isShowingFPS;
   sigc::connection mTimeoutConnection;
+  std::chrono::system_clock::time_point mChronometerStart;
 };
 
 } // namespace video
