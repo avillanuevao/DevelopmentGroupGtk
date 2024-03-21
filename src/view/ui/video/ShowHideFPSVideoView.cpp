@@ -6,18 +6,12 @@ namespace ui
 {
 namespace video 
 {
-ShowHideFPSVideoView::ShowHideFPSVideoView(std::shared_ptr<model::video::Video> model, 
-  std::shared_ptr<controller::video::ShowHideFPSVideoController> controller) :
-    mModel(model),
-    mController(controller)
+ShowHideFPSVideoView::ShowHideFPSVideoView(std::shared_ptr<model::video::Video> videoModel, 
+  std::shared_ptr<controller::video::ShowHideFPSVideoController> showHideFPSVideoController) :
+    mVideoModel(videoModel), mShowHideFPSVideoController(showHideFPSVideoController)
 {
-  set_size_request(100, 50);
-  set_halign(Gtk::Align::CENTER);
-  set_margin_top(10);
-
+  buttonConfiguration(); 
   updateLabel();
-
-  signal_clicked().connect(sigc::mem_fun(*this, &ShowHideFPSVideoView::onClicked));
 }
 
 ShowHideFPSVideoView::~ShowHideFPSVideoView()
@@ -26,19 +20,28 @@ ShowHideFPSVideoView::~ShowHideFPSVideoView()
 
 void ShowHideFPSVideoView::onClicked()
 {
-  mController->showHideFPSVideo();
+  mShowHideFPSVideoController->showHideFPSVideo();
   updateLabel();
+}
+
+void ShowHideFPSVideoView::buttonConfiguration()
+{
+  set_size_request(kWidthButton, kHeigthButton);
+  set_halign(Gtk::Align::CENTER);
+  set_margin_top(kMarginTop);
+
+  signal_clicked().connect(sigc::mem_fun(*this, &ShowHideFPSVideoView::onClicked));
 }
 
 void ShowHideFPSVideoView::updateLabel()
 {
-  if(mModel->getIsShowingFPS())
+  if(mVideoModel->getIsShowingFPS())
   {
-    set_label(mLabelHide);
+    set_label(kLabelHide);
   }
   else
   {
-    set_label(mLabelShow);
+    set_label(kLabelShow);
   }
 }
 

@@ -27,36 +27,40 @@ class PaintArea :
   public utils::designPattern::SignalSubscriber<model::video::signal::ShowHideFPSSignal>,
   public utils::designPattern::SignalSubscriber<model::video::signal::PlayPauseVideoSignal>
 {
-public:
-  PaintArea(view::communication::video::RtpVideo* rtpVideo);
-  virtual ~PaintArea();
+  public:
+    PaintArea(view::communication::video::RtpVideo* rtpVideo);
+    virtual ~PaintArea();
 
-  bool on_timeout();
-  void recievedSignal(model::video::signal::ShowHideFPSSignal signal) override;
-  void recievedSignal(model::video::signal::PlayPauseVideoSignal signal) override;
-protected:
-  void on_draw(const Cairo::RefPtr<Cairo::Context> &context, int width, int height);
+    bool on_timeout();
+    void recievedSignal(model::video::signal::ShowHideFPSSignal signal) override;
+    void recievedSignal(model::video::signal::PlayPauseVideoSignal signal) override;
+  
+  protected:
+    void on_draw(const Cairo::RefPtr<Cairo::Context> &context, int width, int height);
 
-private:
-  void initializeRtp();
-  void paintVideo(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height);
-  void drawFPS(const Cairo::RefPtr<Cairo::Context> &context, int x, int y);
-  void drawText(const Cairo::RefPtr<Cairo::Context> &context, Glib::ustring text, int xPosition, 
-                int yPosition);
+  private:
+    const size_t kFrameCount = 60;
+    const int kXFPS = 10;
+    const int kYFPS = 10;
 
-  void connectTimeout();
-  void disconnectTimeout();
+    void initializeRtp();
+    void paintVideo(const Cairo::RefPtr<Cairo::Context> &cr);
+    void paintFPS(const Cairo::RefPtr<Cairo::Context> &context, int x, int y);
+    void paintText(const Cairo::RefPtr<Cairo::Context> &context, Glib::ustring text, int xPosition, 
+                  int yPosition);
+    void connectTimeout();
+    void disconnectTimeout();
+    void calculateFPS();
 
-  view::communication::video::RtpVideo* mRtpVideo;
-  cairo_surface_t* mSurface_t;
-  int mFPS;
-  bool isShowingFPS;
-  Glib::SignalTimeout mTimeoutSignal;
-  int kFrameCount = 60;
-  std::vector<std::chrono::duration<double>> mTimestampFPS;
-  std::chrono::system_clock::time_point mStart;
-  std::chrono::system_clock::time_point mEnd;
-  sigc::connection mTimeoutConnection;
+    view::communication::video::RtpVideo* mRtpVideo;
+    cairo_surface_t* mSurface_t;
+    int mFPS;
+    bool mIsShowingFPS;
+    Glib::SignalTimeout mTimeoutSignal;
+    std::vector<std::chrono::duration<double>> mTimestampFPS;
+    std::chrono::system_clock::time_point mTimestampFPSStart;
+    std::chrono::system_clock::time_point mTimestampFPSEnd;
+    sigc::connection mTimeoutConnection;
 };
 
 } // namespace video

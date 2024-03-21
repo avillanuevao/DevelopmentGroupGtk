@@ -18,7 +18,8 @@ namespace view
 namespace ui
 {
 
-class MainWindow : public Gtk::Window
+class MainWindow : 
+  public Gtk::Window
 {
 public:
   MainWindow(view::communication::video::RtpVideo* rtpVideo, 
@@ -28,12 +29,22 @@ public:
   virtual ~MainWindow();
 
 private:
+  const int kWidthWindow = 800;
+  const int kHeigthWindow = 600;
+  const int kWidhtVideo = 640;
+  const int kHeigthVideo = 480;
+
+  void windowConfiguration();
+  void initializeUIComponents();
+  void addSubscribersToVideoModel();
+
   Gtk::Box mHorizontalBox;
   Gtk::Box mVerticalBoxPaintArea;
   Gtk::Box mVerticalBoxButtons;
+
   std::shared_ptr<model::video::Video> mVideoModel;
   std::shared_ptr<view::ui::video::PaintArea> mPaintArea;
-  view::ui::video::PlayPauseVideoView mButtonPlayPauseVideoView;
+  std::shared_ptr<view::ui::video::PlayPauseVideoView> mButtonPlayPauseVideoView;
   std::shared_ptr<view::ui::video::ShowHideFPSVideoView> mButtonShowHideFPSVideoView;
 };
 
