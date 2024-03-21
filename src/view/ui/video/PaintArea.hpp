@@ -64,7 +64,6 @@ class PaintArea :
     std::chrono::system_clock::time_point mTimestampFPSEnd;
     sigc::connection mTimeoutConnection;
     std::chrono::system_clock::time_point mChronometerStart;
-  std::chrono::system_clock::time_point mChronometerStart;
 };
 
 } // namespace video
