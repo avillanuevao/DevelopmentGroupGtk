@@ -148,12 +148,12 @@ void PaintArea::paintFPS(const Cairo::RefPtr<Cairo::Context> &context, int x, in
   }
 }
 
-void PaintArea::drawChronometer(const Cairo::RefPtr<Cairo::Context> &context, int x, int y)
+void PaintArea::paintChronometer(const Cairo::RefPtr<Cairo::Context> &context, int x, int y)
 {
 
 }
 
-void PaintArea::drawText(const Cairo::RefPtr<Cairo::Context> &context, Glib::ustring text, int xPosition,
+void PaintArea::paintText(const Cairo::RefPtr<Cairo::Context> &context, Glib::ustring text, int xPosition,
                       int yPosition)
 {
   Pango::FontDescription font;
