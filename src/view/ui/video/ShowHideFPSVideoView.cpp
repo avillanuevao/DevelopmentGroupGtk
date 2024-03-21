@@ -8,8 +8,7 @@ namespace video
 {
 ShowHideFPSVideoView::ShowHideFPSVideoView(std::shared_ptr<model::video::Video> videoModel, 
   std::shared_ptr<controller::video::ShowHideFPSVideoController> showHideFPSVideoController) :
-    mVideoModel(videoModel),
-    mShowHideFPSVideoController(showHideFPSVideoController)
+    mVideoModel(videoModel), mShowHideFPSVideoController(showHideFPSVideoController)
 {
   buttonConfiguration(); 
   updateLabel();
