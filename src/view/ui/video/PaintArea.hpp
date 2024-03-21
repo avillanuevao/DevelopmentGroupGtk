@@ -24,7 +24,7 @@ namespace video
 
 class PaintArea : 
   public Gtk::DrawingArea,
-  public utils::designPattern::SignalSubscriber<model::video::signal::ShowHideFPSSignal>
+  public utils::designPattern::SignalSubscriber<model::video::signal::ShowHideFPSSignal>,
   public utils::designPattern::SignalSubscriber<model::video::signal::PlayPauseVideoSignal>
 {
 public:

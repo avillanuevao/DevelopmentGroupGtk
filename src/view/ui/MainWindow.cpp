@@ -13,7 +13,7 @@ MainWindow::MainWindow(view::communication::video::RtpVideo* rtpVideo,
     mVerticalBoxButtons(Gtk::Orientation::VERTICAL),
     mVideoModel(videoModel),
     mPaintArea(std::make_shared<view::ui::video::PaintArea>(rtpVideo)),
-    mButtonPlayPauseVideoView(videoModel, playPauseVideoController)
+    mButtonPlayPauseVideoView(videoModel, playPauseVideoController),
     mButtonShowHideFPSVideoView(std::make_shared<view::ui::video::ShowHideFPSVideoView>(videoModel, showHideFPSVideoController))
 {
   set_title("Video");
@@ -21,14 +21,14 @@ MainWindow::MainWindow(view::communication::video::RtpVideo* rtpVideo,
 
   mVideoModel->
     utils::designPattern::SignalPublisher<model::video::signal::PlayPauseVideoSignal>::addSubscriber(mPaintArea);
-  mVideoModel->addSubscriber(mPaintArea);
+  mVideoModel->utils::designPattern::SignalPublisher<model::video::signal::ShowHideFPSSignal>::addSubscriber(mPaintArea);
 
   mPaintArea->set_content_width(640);
   mPaintArea->set_content_height(480);
 
   mVerticalBoxButtons.set_expand(true);
 
-  mVerticalBoxButtons.append(mButtonShowHideFPSVideoView);
+  mVerticalBoxButtons.append(*mButtonShowHideFPSVideoView);
   mVerticalBoxButtons.append(mButtonPlayPauseVideoView);
   
   mVerticalBoxPaintArea.append(*mPaintArea);
